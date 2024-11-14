@@ -14,4 +14,4 @@ RUN pip install -r requirements.txt
 
 COPY main.py /app
 
-ENTRYPOINT ["python3", "./main.py"]
+CMD exec functions-framework --target=main_handle
