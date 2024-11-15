@@ -22,8 +22,8 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
     pipe.scheduler = diffusers.DPMSolverMultistepScheduler.from_config(pipe.scheduler.config,
                                                       use_karras_sigmas=True)
 
-    pipe.load_textual_inversion("/vol1/embeddings", weight_name="easynegative.safetensors", token="easynegative")
-    pipe.load_textual_inversion("/vol1/embeddings", weight_name="bad-hands-5.pt", token="bad-hands-5")
+    # pipe.load_textual_inversion("/vol1/embeddings", weight_name="easynegative.safetensors", token="easynegative")
+    # pipe.load_textual_inversion("/vol1/embeddings", weight_name="bad-hands-5.pt", token="bad-hands-5")
 
     generator = torch.Generator(device=device).manual_seed(seed)
 
@@ -45,7 +45,7 @@ def main_handle(request):
     request_json = request.get_json(silent=True)
 
     prompt = request_json['prompt']
-    negative_prompt = "worst quality, low quality, bad face, ugly face, nsfw"
+    negative_prompt = "nsfw, sexy, breast, nude, 2 heads, duplicate, blurry, abstract, disfigured, deformed, framed, bad art, poorly drawn, extra limbs, b&w, weird colors, watermark, blur haze, long neck, elongated body, cropped image, out of frame, draft, deformed hands, twisted fingers, double image, malformed hands, multiple heads, ugly, poorly drawn hands, missing limb, cut-off, over satured, grain, lowres, bad anatomy, poorly drawn face, mutation, mutated, floating limbs, disconnected limbs, out of focus, long body, disgusting, extra fingers, missing arms, mutated hands, cloned face, missing legs,"
 
     model_filename = "/vol1/ckpts/beautifulRealistic_v60.safetensors"
     vae_filename = "/vol1/vae/vaeFtMse840000EmaPruned_vae.safetensors"
