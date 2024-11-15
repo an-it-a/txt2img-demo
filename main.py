@@ -7,12 +7,12 @@ import random
 device = "cuda"
 
 
-def txt2img(prompt, negative_prompt, model_filename, vae_filename, scheduler_name, height, width, steps, guidance, clip_skip, seed):
+def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
     pipe = StableDiffusionPipeline.from_single_file(model_filename, torch_dtype=torch.float16, safety_checker=None)
 
-    # if vae_filename is not None:
-    #     pipe.vae = AutoencoderKL.from_single_file(vae_filename, torch_dtype=torch.float16)
+    if vae_filename is not None:
+        pipe.vae = AutoencoderKL.from_single_file(vae_filename, torch_dtype=torch.float16)
 
     pipe = pipe.to(device)
     pipe.safety_checker = None
@@ -22,8 +22,8 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, scheduler_nam
     pipe.scheduler = diffusers.DPMSolverMultistepScheduler.from_config(pipe.scheduler.config,
                                                       use_karras_sigmas=True)
 
-    # pipe.load_textual_inversion("/vol1/embeddings", weight_name="easynegative.safetensors", token="easynegative")
-    # pipe.load_textual_inversion("/vol1/embeddings", weight_name="bad-hands-5.pt", token="bad-hands-5")
+    pipe.load_textual_inversion("/vol1/embeddings", weight_name="easynegative.safetensors", token="easynegative")
+    pipe.load_textual_inversion("/vol1/embeddings", weight_name="bad-hands-5.pt", token="bad-hands-5")
 
     generator = torch.Generator(device=device).manual_seed(seed)
 
@@ -50,8 +50,6 @@ def main_handle(request):
     model_filename = "/vol1/ckpts/beautifulRealistic_v60.safetensors"
     vae_filename = "/vol1/vae/vaeFtMse840000EmaPruned_vae.safetensors"
 
-    scheduler_name = "DPM++ 2M Karras"
-
     height = 768
     width = 512
     steps = 20
@@ -60,7 +58,7 @@ def main_handle(request):
 
     seed = random.randint(1, 4294967295)
 
-    images = txt2img(prompt, negative_prompt, model_filename, vae_filename, scheduler_name, height, width, steps, guidance, clip_skip, seed)
+    images = txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed)
     images[0].save("/vol1/output/" + str(seed) + ".png")
 
-    return 'Result: {}.png'.format(seed)
+    return 'Result: {}.png\n'.format(seed)
