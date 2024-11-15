@@ -61,4 +61,9 @@ def main_handle(request):
     images = txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed)
     images[0].save("/vol1/output/" + str(seed) + ".png")
 
-    return '{\'result\': \'{}.png\'}'.format(seed)
+    headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+    }
+    text = '{"result":"' + str(seed) + '.png"}'
+    return (text, 200, headers)
