@@ -2,3 +2,4 @@ functions-framework==3.*
 torch
 diffusers
 transformers
+accelerate
