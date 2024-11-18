@@ -25,6 +25,7 @@ This project requires 1 Cloud Storage bucket to store the models
    * Mount Path: `/vol`
 
 ## Request Curl
+<i>Remember to replace your endpoint URL!</i>
 ```
 curl -X POST -H 'Content-Type: application/json' \
 -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
