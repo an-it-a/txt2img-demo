@@ -12,7 +12,7 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip install -r requirements.txt
 
-RUN apt-get install wget
+RUN apt-get install -y wget
 
 RUN mkdir /app/models
 WORKDIR /app/models
