@@ -33,7 +33,7 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
     pipe.load_lora_weights(lora_path, weight_name="more_details.safetensors", adapter_name="more_details")
     pipe.load_lora_weights(lora_path, weight_name="wowifierV3.safetensors", adapter_name="wowifierV3")
 
-    pipe.set_adapters(["more_details", "wowifier"], adapter_weights=[0.2, 0.2])
+    pipe.set_adapters(["more_details", "wowifierV3"], adapter_weights=[0.2, 0.2])
 
     generator = torch.Generator(device=device).manual_seed(seed)
 
