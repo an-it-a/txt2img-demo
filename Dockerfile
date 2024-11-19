@@ -23,8 +23,8 @@ WORKDIR /app/models/vae
 RUN wget "https://civitai.com/api/download/models/311162?type=Model&format=SafeTensor" --content-disposition
 RUN mkdir /app/models/embeddings
 WORKDIR /app/models/embeddings
-# ng_deepnegative_v1_75t.pt
-RUN wget "https://civitai.com/api/download/models/5637?type=Model&format=PickleTensor&size=full&fp=fp16" --content-disposition
+# easynegative.safetensors
+RUN wget "https://civitai.com/api/download/models/9208?type=Model&format=SafeTensor&size=full&fp=fp16" --content-disposition
 # bad-hands-5.pt
 RUN wget "https://civitai.com/api/download/models/125849?type=Model&format=PickleTensor" --content-disposition
 RUN mkdir /app/models/loras

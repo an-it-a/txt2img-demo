@@ -27,7 +27,7 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
     pipe.scheduler = diffusers.DPMSolverMultistepScheduler.from_config(pipe.scheduler.config,
                                                       use_karras_sigmas=True)
 
-    pipe.load_textual_inversion(embeddings_path, weight_name="ng_deepnegative_v1_75t.pt", token="ng_deepnegative_v1_75t")
+    pipe.load_textual_inversion(embeddings_path, weight_name="easynegative.safetensors", token="easynegative")
     pipe.load_textual_inversion(embeddings_path, weight_name="bad-hands-5.pt", token="bad-hands-5")
 
     pipe.load_lora_weights(lora_path, weight_name="more_details.safetensors", adapter_name="more_details")
@@ -55,7 +55,7 @@ def main_handle(request):
     request_json = request.get_json(silent=True)
 
     prompt = request_json['prompt']
-    negative_prompt = "ng_deepnegative_v1_75t, bad-hands-5, nsfw, sexy, breast, nude, 2 heads, duplicate, blurry, abstract, disfigured, deformed, framed, bad art, poorly drawn, extra limbs, b&w, weird colors, watermark, blur haze, long neck, elongated body, cropped image, out of frame, draft, deformed hands, twisted fingers, double image, malformed hands, multiple heads, ugly, poorly drawn hands, missing limb, cut-off, over satured, grain, lowres, bad anatomy, poorly drawn face, mutation, mutated, floating limbs, disconnected limbs, out of focus, long body, disgusting, extra fingers, missing arms, mutated hands, cloned face, missing legs,"
+    negative_prompt = "easynegative, bad-hands-5, nsfw, sexy, breast, nude, 2 heads, duplicate, blurry, abstract, disfigured, deformed, framed, bad art, poorly drawn, extra limbs, b&w, weird colors, watermark, blur haze, long neck, elongated body, cropped image, out of frame, draft, deformed hands, twisted fingers, double image, malformed hands, multiple heads, ugly, poorly drawn hands, missing limb, cut-off, over satured, grain, lowres, bad anatomy, poorly drawn face, mutation, mutated, floating limbs, disconnected limbs, out of focus, long body, disgusting, extra fingers, missing arms, mutated hands, cloned face, missing legs,"
 
     model_filename = ckpt_path+"/beautifulRealistic_v60.safetensors"
     vae_filename = vae_path + "/vaeFtMse840000EmaPruned_vaeFtMse840k.safetensors"
