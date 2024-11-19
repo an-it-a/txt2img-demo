@@ -77,3 +77,4 @@ def main_handle(request):
     }
     text = '{"result":"' + str(seed) + '.png"}'
     return (text, 200, headers)
+
