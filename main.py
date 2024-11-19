@@ -57,7 +57,7 @@ def main_handle(request):
 
     model_filename = ckpt_path+"/beautifulRealistic_v60.safetensors"
     # vae_filename = vae_path+"/vaeFtMse840000EmaPruned_vae.safetensors"
-    vae_filename = vae_path + "/vaeFtMse840000EmaPrune840k.safetensors"
+    vae_filename = vae_path + "/vaeFtMse840000EmaPruned_vaeFtMse840k.safetensors"
 
     height = 768
     width = 512
