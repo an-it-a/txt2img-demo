@@ -6,6 +6,14 @@ import random
 
 device = "cuda"
 
+ckpt_path = "/app/models"
+vae_path = "/app/models"
+embeddings_path = "/app/models"
+
+# ckpt_path = "/vol1/ckpts"
+# vae_path = "/vol1/vae"
+# embeddings_path = "/vol1/embeddings"
+
 
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
@@ -22,8 +30,8 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
     pipe.scheduler = diffusers.DPMSolverMultistepScheduler.from_config(pipe.scheduler.config,
                                                       use_karras_sigmas=True)
 
-    pipe.load_textual_inversion("/vol1/embeddings", weight_name="ng_deepnegative_v1_75t.pt", token="ng_deepnegative_v1_75t")
-    pipe.load_textual_inversion("/vol1/embeddings", weight_name="bad-hands-5.pt", token="bad-hands-5")
+    pipe.load_textual_inversion(embeddings_path, weight_name="ng_deepnegative_v1_75t.pt", token="ng_deepnegative_v1_75t")
+    pipe.load_textual_inversion(embeddings_path, weight_name="bad-hands-5.pt", token="bad-hands-5")
 
     generator = torch.Generator(device=device).manual_seed(seed)
 
@@ -47,8 +55,8 @@ def main_handle(request):
     prompt = request_json['prompt']
     negative_prompt = "ng_deepnegative_v1_75t, bad-hands-5, nsfw, sexy, breast, nude, 2 heads, duplicate, blurry, abstract, disfigured, deformed, framed, bad art, poorly drawn, extra limbs, b&w, weird colors, watermark, blur haze, long neck, elongated body, cropped image, out of frame, draft, deformed hands, twisted fingers, double image, malformed hands, multiple heads, ugly, poorly drawn hands, missing limb, cut-off, over satured, grain, lowres, bad anatomy, poorly drawn face, mutation, mutated, floating limbs, disconnected limbs, out of focus, long body, disgusting, extra fingers, missing arms, mutated hands, cloned face, missing legs,"
 
-    model_filename = "/vol1/ckpts/beautifulRealistic_v60.safetensors"
-    vae_filename = "/vol1/vae/vaeFtMse840000EmaPruned_vae.safetensors"
+    model_filename = ckpt_path+"/beautifulRealistic_v60.safetensors"
+    vae_filename = vae_path+"/vaeFtMse840000EmaPruned_vae.safetensors"
 
     height = 768
     width = 512
