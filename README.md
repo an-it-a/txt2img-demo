@@ -7,15 +7,9 @@ Subscribe and Follow me! 💪🏻<br/>
 <hr/>
 
 ## Cloud storage
-This project requires 1 Cloud Storage bucket to store the models
+This project requires 1 Cloud Storage bucket to store the output results
 ### Folders:
-1. ckpts
-    * checkpoints
-2. embeddings
-    * textual embeddings
-3. vae
-    * vae
-4. output
+1. output
     * output results will be stored here
 
 ## Cloud Run Setup

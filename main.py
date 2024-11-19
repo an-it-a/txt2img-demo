@@ -6,13 +6,10 @@ import random
 
 device = "cuda"
 
-# ckpt_path = "/app/models"
-# vae_path = "/app/models"
-# embeddings_path = "/app/models"
-
-ckpt_path = "/vol1/ckpts"
-vae_path = "/vol1/vae"
-embeddings_path = "/vol1/embeddings"
+ckpt_path = "/app/models/ckpts"
+vae_path = "/app/models/vae"
+embeddings_path = "/app/models/embeddings"
+lora_path = "/app/models/loras"
 
 
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
@@ -32,6 +29,11 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
 
     pipe.load_textual_inversion(embeddings_path, weight_name="ng_deepnegative_v1_75t.pt", token="ng_deepnegative_v1_75t")
     pipe.load_textual_inversion(embeddings_path, weight_name="bad-hands-5.pt", token="bad-hands-5")
+
+    pipe.load_lora_weights(lora_path, weight_name="more_details.safetensors", adapter_name="more_details")
+    pipe.load_lora_weights(lora_path, weight_name="wowifierV3.safetensors", adapter_name="wowifierV3")
+
+    pipe.set_adapters(["more_details", "wowifier"], adapter_weights=[0.2, 0.2])
 
     generator = torch.Generator(device=device).manual_seed(seed)
 
@@ -56,8 +58,7 @@ def main_handle(request):
     negative_prompt = "ng_deepnegative_v1_75t, bad-hands-5, nsfw, sexy, breast, nude, 2 heads, duplicate, blurry, abstract, disfigured, deformed, framed, bad art, poorly drawn, extra limbs, b&w, weird colors, watermark, blur haze, long neck, elongated body, cropped image, out of frame, draft, deformed hands, twisted fingers, double image, malformed hands, multiple heads, ugly, poorly drawn hands, missing limb, cut-off, over satured, grain, lowres, bad anatomy, poorly drawn face, mutation, mutated, floating limbs, disconnected limbs, out of focus, long body, disgusting, extra fingers, missing arms, mutated hands, cloned face, missing legs,"
 
     model_filename = ckpt_path+"/beautifulRealistic_v60.safetensors"
-    vae_filename = vae_path+"/vaeFtMse840000EmaPruned_vae.safetensors"
-    # vae_filename = vae_path + "/vaeFtMse840000EmaPruned_vaeFtMse840k.safetensors"
+    vae_filename = vae_path + "/vaeFtMse840000EmaPruned_vaeFtMse840k.safetensors"
 
     height = 768
     width = 512
