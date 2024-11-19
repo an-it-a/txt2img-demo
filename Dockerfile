@@ -1,7 +1,7 @@
 FROM nvidia/cuda:12.6.2-runtime-ubuntu22.04
 
 RUN apt-get update && \
-    apt-get install -y python3-pip python3-dev python-is-python3&& \
+    apt-get install -y python3-pip python3-dev python-is-python3 wget&& \
     rm -rf /var/lib/apt/lists/*
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -11,8 +11,6 @@ WORKDIR /app
 
 COPY requirements.txt /app
 RUN pip install -r requirements.txt
-
-RUN apt-get install -y wget
 
 RUN mkdir /app/models
 WORKDIR /app/models
