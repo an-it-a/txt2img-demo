@@ -23,16 +23,14 @@ WORKDIR /app/models/vae
 RUN wget "https://civitai.com/api/download/models/311162?type=Model&format=SafeTensor" --content-disposition
 RUN mkdir /app/models/embeddings
 WORKDIR /app/models/embeddings
-# easynegative.safetensors
-RUN wget "https://civitai.com/api/download/models/9208?type=Model&format=SafeTensor&size=full&fp=fp16" --content-disposition
+# easynegative.pt
+RUN wget "https://civitai.com/api/download/models/9536?type=Model&format=PickleTensor&size=full&fp=fp16" --content-disposition
 # bad-hands-5.pt
 RUN wget "https://civitai.com/api/download/models/125849?type=Model&format=PickleTensor" --content-disposition
 RUN mkdir /app/models/loras
 WORKDIR /app/models/loras
 # more_details.safetensors
 RUN wget "https://civitai.com/api/download/models/87153?type=Model&format=SafeTensor" --content-disposition
-# wowifierV3.safetensors
-RUN wget "https://civitai.com/api/download/models/92506?type=Model&format=SafeTensor" --content-disposition
 WORKDIR /app
 
 COPY main.py /app

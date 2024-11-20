@@ -11,7 +11,6 @@ vae_path = "/app/models/vae"
 embeddings_path = "/app/models/embeddings"
 lora_path = "/app/models/loras"
 
-
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
     pipe = StableDiffusionPipeline.from_single_file(model_filename, torch_dtype=torch.float16, safety_checker=None)
@@ -27,13 +26,12 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
     pipe.scheduler = diffusers.DPMSolverMultistepScheduler.from_config(pipe.scheduler.config,
                                                       use_karras_sigmas=True)
 
-    pipe.load_textual_inversion(embeddings_path, weight_name="easynegative.safetensors", token="easynegative")
+    pipe.load_textual_inversion(embeddings_path, weight_name="easynegative.pt", token="easynegative")
     pipe.load_textual_inversion(embeddings_path, weight_name="bad-hands-5.pt", token="bad-hands-5")
 
     pipe.load_lora_weights(lora_path, weight_name="more_details.safetensors", adapter_name="more_details")
-    pipe.load_lora_weights(lora_path, weight_name="wowifierV3.safetensors", adapter_name="wowifierV3")
 
-    pipe.set_adapters(["more_details", "wowifierV3"], adapter_weights=[0.2, 0.2])
+    pipe.set_adapters(["more_details"], adapter_weights=[0.4])
 
     generator = torch.Generator(device=device).manual_seed(seed)
 
@@ -77,4 +75,3 @@ def main_handle(request):
     }
     text = '{"result":"' + str(seed) + '.png"}'
     return (text, 200, headers)
-
