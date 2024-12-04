@@ -6,15 +6,15 @@ import random
 
 device = "cuda"
 
-# ckpt_path = "/app/models/ckpts"
-# vae_path = "/app/models/vae"
-# embeddings_path = "/app/models/embeddings"
-# lora_path = "/app/models/loras"
+ckpt_path = "/app/models/ckpts"
+vae_path = "/app/models/vae"
+embeddings_path = "/app/models/embeddings"
+lora_path = "/app/models/loras"
 
-ckpt_path = "/vol1/ckpts"
-vae_path = "/vol1/vae"
-embeddings_path = "/vol1/embeddings"
-lora_path = "/vol1/loras"
+# ckpt_path = "/vol1/ckpts"
+# vae_path = "/vol1/vae"
+# embeddings_path = "/vol1/embeddings"
+# lora_path = "/vol1/loras"
 
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
