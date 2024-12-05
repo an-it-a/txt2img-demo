@@ -19,7 +19,7 @@ lora_path = "/vol1/loras"
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
     print("start loading "+model_filename)
-    pipe = StableDiffusionPipeline.from_single_file(model_filename, torch_dtype=torch.float16, safety_checker=None)
+    pipe = StableDiffusionPipeline.from_single_file(model_filename, torch_dtype=torch.float16, safety_checker=None, local_files_only=True)
     print("finished loading " + model_filename)
 
     if vae_filename is not None:
