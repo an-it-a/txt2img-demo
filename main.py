@@ -6,40 +6,55 @@ import random
 
 device = "cuda"
 
-ckpt_path = "/app/models/ckpts"
-vae_path = "/app/models/vae"
-embeddings_path = "/app/models/embeddings"
-lora_path = "/app/models/loras"
+# ckpt_path = "/app/models/ckpts"
+# vae_path = "/app/models/vae"
+# embeddings_path = "/app/models/embeddings"
+# lora_path = "/app/models/loras"
 
-# ckpt_path = "/vol1/ckpts"
-# vae_path = "/vol1/vae"
-# embeddings_path = "/vol1/embeddings"
-# lora_path = "/vol1/loras"
+ckpt_path = "/vol1/ckpts"
+vae_path = "/vol1/vae"
+embeddings_path = "/vol1/embeddings"
+lora_path = "/vol1/loras"
 
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
+    print("start loading "+model_filename)
     pipe = StableDiffusionPipeline.from_single_file(model_filename, torch_dtype=torch.float16, safety_checker=None)
+    print("finished loading " + model_filename)
 
     if vae_filename is not None:
+        print("start loading " + vae_filename)
         pipe.vae = AutoencoderKL.from_single_file(vae_filename, torch_dtype=torch.float16)
+        print("finished loading " + vae_filename)
 
     pipe = pipe.to(device)
     pipe.safety_checker = None
 
     # pipe.enable_attention_slicing()
 
+    print("start init scheduler")
     pipe.scheduler = diffusers.DPMSolverMultistepScheduler.from_config(pipe.scheduler.config,
                                                       use_karras_sigmas=True)
+    print("finish init scheduler")
 
+    print("start loading easynegative.pt")
     pipe.load_textual_inversion(embeddings_path, weight_name="easynegative.pt", token="easynegative")
+    print("finished loading easynegative.pt")
+    print("start loading bad-hands-5.pt")
     pipe.load_textual_inversion(embeddings_path, weight_name="bad-hands-5.pt", token="bad-hands-5")
+    print("finished loading bad-hands-5.pt")
 
+    print("start loading more_details.safetensors")
     pipe.load_lora_weights(lora_path, weight_name="more_details.safetensors", adapter_name="more_details")
+    print("finished loading more_details.safetensors")
 
     pipe.set_adapters(["more_details"], adapter_weights=[0.4])
 
+    print("start init generator")
     generator = torch.Generator(device=device).manual_seed(seed)
+    print("finished init generator")
 
+    print("start generating image")
     images = pipe(prompt=prompt,
                   negative_prompt=negative_prompt,
                   height=height,
@@ -49,6 +64,7 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
                   clip_skip=clip_skip,
                   generator=generator,
                   ).images
+    print("finished generating image")
 
     return images
 
@@ -72,7 +88,9 @@ def main_handle(request):
     seed = random.randint(1, 4294967295)
 
     images = txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed)
+    print("start saving result to Google Cloud Storage")
     images[0].save("/vol1/output/" + str(seed) + ".png")
+    print("finished saving result to Google Cloud Storage")
 
     headers = {
         'Access-Control-Allow-Origin': '*',
