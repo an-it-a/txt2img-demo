@@ -4,7 +4,6 @@ import diffusers
 from diffusers import StableDiffusionPipeline, AutoencoderKL
 import random
 import os
-import shutil
 
 device = "cuda"
 
@@ -17,25 +16,25 @@ lora_path = "loras"
 
 gcs_bucket = os.getenv("GCS_BUCKET")
 
-# def download_chunks_concurrently(blob_name, filename, chunk_size=32 * 1024 * 1024, workers=8):
-#     from google.cloud.storage import Client, transfer_manager
+def download_chunks_concurrently(blob_name, filename, chunk_size=32 * 1024 * 1024, workers=8):
+    from google.cloud.storage import Client, transfer_manager
 
-#     print("trying to download {} {} to {}.".format(gcs_bucket, blob_name, filename))
+    print("trying to download {} {} to {}.".format(gcs_bucket, blob_name, filename))
 
-#     storage_client = Client()
-#     bucket = storage_client.bucket(gcs_bucket)
-#     blob = bucket.blob(blob_name)
+    storage_client = Client()
+    bucket = storage_client.bucket(gcs_bucket)
+    blob = bucket.blob(blob_name)
 
-#     transfer_manager.download_chunks_concurrently(
-#         blob, filename, chunk_size=chunk_size, max_workers=workers
-#     )
+    transfer_manager.download_chunks_concurrently(
+        blob, filename, chunk_size=chunk_size, max_workers=workers
+    )
 
-#     print("Downloaded {} to {}.".format(blob_name, filename))
+    print("Downloaded {} to {}.".format(blob_name, filename))
 
 def cp_from_gcs_if_not_exists(path, filename):
     if os.path.isfile(model_folder+path+"/"+filename) == False:
-        # download_chunks_concurrently(path+"/"+filename, model_folder+path+"/"+filename)
-        shutil.copyfile("/vol1/"+path+"/"+filename, model_folder+path+"/"+filename)
+        download_chunks_concurrently(path+"/"+filename, model_folder+path+"/"+filename)
+        # shutil.copyfile("/vol1/"+path+"/"+filename, model_folder+path+"/"+filename)
 
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
