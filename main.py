@@ -44,8 +44,8 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
 
     if vae_filename is not None:
         print("start loading " + vae_filename)
-        cp_from_gcs_if_not_exists(model_folder+vae_path, vae_filename)
-        pipe.vae = AutoencoderKL.from_single_file(vae_path+"/"+vae_filename, torch_dtype=torch.float16)
+        cp_from_gcs_if_not_exists(vae_path, vae_filename)
+        pipe.vae = AutoencoderKL.from_single_file(model_folder+vae_path+"/"+vae_filename, torch_dtype=torch.float16)
         print("finished loading " + vae_filename)
 
     pipe = pipe.to(device)
