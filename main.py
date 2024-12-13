@@ -39,7 +39,7 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
 
     print("start loading "+model_filename)
     cp_from_gcs_if_not_exists(ckpt_path, model_filename)
-    pipe = StableDiffusionPipeline.from_single_file(model_folder+model_filename+"/"+model_filename, torch_dtype=torch.float16, safety_checker=None, local_files_only=True, original_config_file="/app/v1-inference.yaml")
+    pipe = StableDiffusionPipeline.from_single_file(model_folder+ckpt_path+"/"+model_filename, torch_dtype=torch.float16, safety_checker=None, local_files_only=True, original_config="/app/v1-inference.yaml")
     print("finished loading " + model_filename)
 
     if vae_filename is not None:
