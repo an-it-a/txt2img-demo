@@ -39,13 +39,13 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
 
     print("start loading "+model_filename)
     cp_from_gcs_if_not_exists(ckpt_path, model_filename)
-    pipe = StableDiffusionPipeline.from_single_file(model_filename, torch_dtype=torch.float16, safety_checker=None, local_files_only=True, original_config_file="/app/v1-inference.yaml")
+    pipe = StableDiffusionPipeline.from_single_file(model_filename+"/"+model_filename, torch_dtype=torch.float16, safety_checker=None, local_files_only=True, original_config_file="/app/v1-inference.yaml")
     print("finished loading " + model_filename)
 
     if vae_filename is not None:
         print("start loading " + vae_filename)
         cp_from_gcs_if_not_exists(vae_path, vae_filename)
-        pipe.vae = AutoencoderKL.from_single_file(vae_filename, torch_dtype=torch.float16)
+        pipe.vae = AutoencoderKL.from_single_file(vae_path+"/"+vae_filename, torch_dtype=torch.float16)
         print("finished loading " + vae_filename)
 
     pipe = pipe.to(device)
@@ -100,8 +100,8 @@ def main_handle(request):
     prompt = request_json['prompt']
     negative_prompt = "easynegative, bad-hands-5, nsfw, sexy, breast, nude, 2 heads, duplicate, blurry, abstract, disfigured, deformed, framed, bad art, poorly drawn, extra limbs, b&w, weird colors, watermark, blur haze, long neck, elongated body, cropped image, out of frame, draft, deformed hands, twisted fingers, double image, malformed hands, multiple heads, ugly, poorly drawn hands, missing limb, cut-off, over satured, grain, lowres, bad anatomy, poorly drawn face, mutation, mutated, floating limbs, disconnected limbs, out of focus, long body, disgusting, extra fingers, missing arms, mutated hands, cloned face, missing legs,"
 
-    model_filename = ckpt_path+"/beautifulRealistic_v60.safetensors"
-    vae_filename = vae_path + "/vaeFtMse840000EmaPruned_vaeFtMse840k.safetensors"
+    model_filename = "beautifulRealistic_v60.safetensors"
+    vae_filename = "vaeFtMse840000EmaPruned_vaeFtMse840k.safetensors"
 
     height = 768
     width = 512
