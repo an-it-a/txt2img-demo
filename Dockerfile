@@ -33,6 +33,6 @@ WORKDIR /app/models/loras
 RUN wget "https://civitai.com/api/download/models/87153?type=Model&format=SafeTensor" --content-disposition
 WORKDIR /app
 
-COPY main.py /app
+COPY main.py v1-inference.yaml /app/
 
 CMD exec functions-framework --target=main_handle
