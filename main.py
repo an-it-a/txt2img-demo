@@ -33,18 +33,18 @@ def download_chunks_concurrently(blob_name, filename, chunk_size=32 * 1024 * 102
 
 def cp_from_gcs_if_not_exists(path, filename):
     if os.path.isfile(filename) == False:
-        download_chunks_concurrently(path+"/"+filename, model_folder+"/"+path+"/"+filename)
+        download_chunks_concurrently(path+"/"+filename, model_folder+path+"/"+filename)
 
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
     print("start loading "+model_filename)
     cp_from_gcs_if_not_exists(ckpt_path, model_filename)
-    pipe = StableDiffusionPipeline.from_single_file(model_filename+"/"+model_filename, torch_dtype=torch.float16, safety_checker=None, local_files_only=True, original_config_file="/app/v1-inference.yaml")
+    pipe = StableDiffusionPipeline.from_single_file(model_folder+model_filename+"/"+model_filename, torch_dtype=torch.float16, safety_checker=None, local_files_only=True, original_config_file="/app/v1-inference.yaml")
     print("finished loading " + model_filename)
 
     if vae_filename is not None:
         print("start loading " + vae_filename)
-        cp_from_gcs_if_not_exists(vae_path, vae_filename)
+        cp_from_gcs_if_not_exists(model_folder+vae_path, vae_filename)
         pipe.vae = AutoencoderKL.from_single_file(vae_path+"/"+vae_filename, torch_dtype=torch.float16)
         print("finished loading " + vae_filename)
 
@@ -60,16 +60,16 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
 
     print("start loading easynegative.pt")
     cp_from_gcs_if_not_exists(embeddings_path, "easynegative.pt")
-    pipe.load_textual_inversion(embeddings_path, weight_name="easynegative.pt", token="easynegative")
+    pipe.load_textual_inversion(model_folder+embeddings_path, weight_name="easynegative.pt", token="easynegative")
     print("finished loading easynegative.pt")
     print("start loading bad-hands-5.pt")
     cp_from_gcs_if_not_exists(embeddings_path, "bad-hands-5.pt")
-    pipe.load_textual_inversion(embeddings_path, weight_name="bad-hands-5.pt", token="bad-hands-5")
+    pipe.load_textual_inversion(model_folder+embeddings_path, weight_name="bad-hands-5.pt", token="bad-hands-5")
     print("finished loading bad-hands-5.pt")
 
     print("start loading more_details.safetensors")
     cp_from_gcs_if_not_exists(lora_path, "more_details.safetensors")
-    pipe.load_lora_weights(lora_path, weight_name="more_details.safetensors", adapter_name="more_details")
+    pipe.load_lora_weights(model_folder+lora_path, weight_name="more_details.safetensors", adapter_name="more_details")
     print("finished loading more_details.safetensors")
 
     pipe.set_adapters(["more_details"], adapter_weights=[0.4])
