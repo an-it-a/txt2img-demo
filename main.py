@@ -19,6 +19,8 @@ gcs_bucket = os.getenv("GCS_BUCKET")
 def download_chunks_concurrently(blob_name, filename, chunk_size=32 * 1024 * 1024, workers=8):
     from google.cloud.storage import Client, transfer_manager
 
+    print("trying to download {} {} to {}.".format(gcs_bucket, blob_name, filename))
+
     storage_client = Client()
     bucket = storage_client.bucket(gcs_bucket)
     blob = bucket.blob(blob_name)
