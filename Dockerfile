@@ -12,25 +12,31 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip install -r requirements.txt
 
-RUN mkdir /app/models
-RUN mkdir /app/models/ckpts
-WORKDIR /app/models/ckpts
-# beautifulRealistic_v60.safetensors
-RUN wget "https://civitai.com/api/download/models/113479?type=Model&format=SafeTensor&size=pruned&fp=fp16" --content-disposition
-RUN mkdir /app/models/vae
-WORKDIR /app/models/vae
-# vaeFtMse840000EmaPruned_vae.safetensors
-RUN wget "https://civitai.com/api/download/models/311162?type=Model&format=SafeTensor" --content-disposition
-RUN mkdir /app/models/embeddings
-WORKDIR /app/models/embeddings
-# easynegative.pt
-RUN wget "https://civitai.com/api/download/models/9536?type=Model&format=PickleTensor&size=full&fp=fp16" --content-disposition
-# bad-hands-5.pt
-RUN wget "https://civitai.com/api/download/models/125849?type=Model&format=PickleTensor" --content-disposition
-RUN mkdir /app/models/loras
-WORKDIR /app/models/loras
-# more_details.safetensors
-RUN wget "https://civitai.com/api/download/models/87153?type=Model&format=SafeTensor" --content-disposition
+RUN mkdir /app/models && \
+    mkdir /app/models/ckpts && \
+    mkdir /app/models/vae && \
+    mkdir /app/models/embeddings && \
+    mkdir /app/models/loras
+
+#### Download the models if not using Google Cloud Storage
+#WORKDIR /app/models/ckpts
+## beautifulRealistic_v60.safetensors
+#RUN wget "https://civitai.com/api/download/models/113479?type=Model&format=SafeTensor&size=pruned&fp=fp16" --content-disposition
+#
+#WORKDIR /app/models/vae
+## vaeFtMse840000EmaPruned_vae.safetensors
+#RUN wget "https://civitai.com/api/download/models/311162?type=Model&format=SafeTensor" --content-disposition
+#
+#WORKDIR /app/models/embeddings
+## easynegative.pt
+#RUN wget "https://civitai.com/api/download/models/9536?type=Model&format=PickleTensor&size=full&fp=fp16" --content-disposition
+## bad-hands-5.pt
+#RUN wget "https://civitai.com/api/download/models/125849?type=Model&format=PickleTensor" --content-disposition
+#
+#WORKDIR /app/models/loras
+## more_details.safetensors
+#RUN wget "https://civitai.com/api/download/models/87153?type=Model&format=SafeTensor" --content-disposition
+
 WORKDIR /app
 
 COPY main.py v1-inference.yaml /app/

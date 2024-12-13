@@ -4,3 +4,4 @@ diffusers
 transformers
 accelerate
 peft
+google-cloud-storage

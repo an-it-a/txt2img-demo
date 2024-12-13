@@ -3,27 +3,46 @@ import torch
 import diffusers
 from diffusers import StableDiffusionPipeline, AutoencoderKL
 import random
+import os
 
 device = "cuda"
 
-# ckpt_path = "/app/models/ckpts"
-# vae_path = "/app/models/vae"
-# embeddings_path = "/app/models/embeddings"
-# lora_path = "/app/models/loras"
+model_folder = "/app/models/"
 
-ckpt_path = "/vol1/ckpts"
-vae_path = "/vol1/vae"
-embeddings_path = "/vol1/embeddings"
-lora_path = "/vol1/loras"
+ckpt_path = "ckpts"
+vae_path = "vae"
+embeddings_path = "embeddings"
+lora_path = "loras"
+
+gcs_bucket = os.getenv("GCS_BUCKET")
+
+def download_chunks_concurrently(blob_name, filename, chunk_size=32 * 1024 * 1024, workers=8):
+    from google.cloud.storage import Client, transfer_manager
+
+    storage_client = Client()
+    bucket = storage_client.bucket(gcs_bucket)
+    blob = bucket.blob(blob_name)
+
+    transfer_manager.download_chunks_concurrently(
+        blob, filename, chunk_size=chunk_size, max_workers=workers
+    )
+
+    print("Downloaded {} to {}.".format(blob_name, filename))
+
+def cp_from_gcs_if_not_exists(path, filename):
+    if os.path.isfile(filename) == False:
+        download_chunks_concurrently(path+"/"+filename, model_folder+"/"+path+"/"+filename)
 
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
 
     print("start loading "+model_filename)
+    cp_from_gcs_if_not_exists(ckpt_path, model_filename)
     pipe = StableDiffusionPipeline.from_single_file(model_filename, torch_dtype=torch.float16, safety_checker=None, local_files_only=True, original_config_file="/app/v1-inference.yaml")
     print("finished loading " + model_filename)
 
     if vae_filename is not None:
         print("start loading " + vae_filename)
+        cp_from_gcs_if_not_exists(vae_path, vae_filename)
         pipe.vae = AutoencoderKL.from_single_file(vae_filename, torch_dtype=torch.float16)
         print("finished loading " + vae_filename)
 
@@ -38,13 +57,16 @@ def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width
     print("finish init scheduler")
 
     print("start loading easynegative.pt")
+    cp_from_gcs_if_not_exists(embeddings_path, "easynegative.pt")
     pipe.load_textual_inversion(embeddings_path, weight_name="easynegative.pt", token="easynegative")
     print("finished loading easynegative.pt")
     print("start loading bad-hands-5.pt")
+    cp_from_gcs_if_not_exists(embeddings_path, "bad-hands-5.pt")
     pipe.load_textual_inversion(embeddings_path, weight_name="bad-hands-5.pt", token="bad-hands-5")
     print("finished loading bad-hands-5.pt")
 
     print("start loading more_details.safetensors")
+    cp_from_gcs_if_not_exists(lora_path, "more_details.safetensors")
     pipe.load_lora_weights(lora_path, weight_name="more_details.safetensors", adapter_name="more_details")
     print("finished loading more_details.safetensors")
 
