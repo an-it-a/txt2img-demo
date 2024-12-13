@@ -32,7 +32,7 @@ def download_chunks_concurrently(blob_name, filename, chunk_size=32 * 1024 * 102
     print("Downloaded {} to {}.".format(blob_name, filename))
 
 def cp_from_gcs_if_not_exists(path, filename):
-    if os.path.isfile(filename) == False:
+    if os.path.isfile(model_folder+path+"/"+filename) == False:
         download_chunks_concurrently(path+"/"+filename, model_folder+path+"/"+filename)
 
 def txt2img(prompt, negative_prompt, model_filename, vae_filename, height, width, steps, guidance, clip_skip, seed):
